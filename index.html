@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>贴膜助手 | 扫码即知手机型号</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 32px;
+            padding: 40px 28px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        .card h1 {
+            font-size: 28px;
+            margin-bottom: 12px;
+            color: #333;
+        }
+        .card .sub {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 32px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 16px;
+        }
+        .result-box {
+            background: #f8f9ff;
+            border-radius: 20px;
+            padding: 24px 16px;
+            margin: 20px 0;
+        }
+        .brand {
+            font-size: 48px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 8px 0 4px;
+        }
+        .model {
+            font-size: 20px;
+            font-weight: 500;
+            color: #333;
+            margin: 8px 0;
+        }
+        .tip {
+            font-size: 14px;
+            color: #888;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid #eee;
+        }
+        .loading {
+            color: #667eea;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>📱 贴膜助手</h1>
+        <div class="sub">扫码即知手机型号，精准匹配贴膜</div>
+        
+        <div class="result-box" id="result-area">
+            <div class="loading">🤖 正在识别您的手机...</div>
+        </div>
+        
+        <div class="tip">
+            ＊ 识别结果仅供参考，请确认后告知店员
+        </div>
+    </div>
+
+    <!-- 引入 WURFL.js 核心库 -->
+    <script src="https://wurfl.io/wurfl.js"></script>
+    
+    <script>
+        // 等待 WURFL 加载完成后执行
+        function initWURFL() {
+            let resultHtml = '';
+            
+            if (typeof WURFL !== 'undefined' && WURFL.complete_device_name) {
+                // 获取设备完整名称
+                const deviceName = WURFL.complete_device_name;
+                const isMobile = WURFL.is_mobile;
+                const formFactor = WURFL.form_factor;
+                
+                resultHtml = `
+                    <div class="brand">🔍 识别完成</div>
+                    <div class="model"><strong>${deviceName}</strong></div>
+                    <div style="font-size: 13px; color: #888; margin-top: 12px;">
+                        设备类型：${formFactor || (isMobile ? '手机/平板' : '电脑')}
+                    </div>
+                    <div style="font-size: 12px; color: #aaa; margin-top: 8px;">
+                        👆 请截图此页面，告知店员您的手机型号
+                    </div>
+                `;
+            } else {
+                // 如果 WURFL 未能识别，显示备用方案
+                resultHtml = `
+                    <div class="brand">⚠️ 未能自动识别</div>
+                    <div class="model">请告知店员您的手机品牌</div>
+                    <div style="margin-top: 12px; font-size: 13px; color: #888;">
+                        常见品牌：iPhone / 华为 / 小米 / OPPO / vivo / 荣耀
+                    </div>
+                `;
+            }
+            
+            document.getElementById('result-area').innerHTML = resultHtml;
+        }
+        
+        // 由于 WURFL.js 是异步加载，我们需要监听它
+        // 简单方案：延迟一点再检查
+        setTimeout(initWURFL, 300);
+    </script>
+</body>
+</html>
