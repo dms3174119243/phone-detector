@@ -84,32 +84,24 @@
         </div>
     </div>
 
-    <!-- 引入 WURFL.js 核心库 -->
-    <script src="https://wurfl.io/wurfl.js"></script>
-    
     <script>
-        // 等待 WURFL 加载完成后执行
-        function initWURFL() {
+        // 显示结果的函数
+        function displayDeviceInfo() {
             let resultHtml = '';
-            
-            if (typeof WURFL !== 'undefined' && WURFL.complete_device_name) {
-                // 获取设备完整名称
-                const deviceName = WURFL.complete_device_name;
-                const isMobile = WURFL.is_mobile;
-                const formFactor = WURFL.form_factor;
-                
+            if (typeof window.WURFL !== 'undefined' && window.WURFL.complete_device_name) {
+                const deviceName = window.WURFL.complete_device_name;
+                const formFactor = window.WURFL.form_factor;
                 resultHtml = `
                     <div class="brand">🔍 识别完成</div>
                     <div class="model"><strong>${deviceName}</strong></div>
                     <div style="font-size: 13px; color: #888; margin-top: 12px;">
-                        设备类型：${formFactor || (isMobile ? '手机/平板' : '电脑')}
+                        设备类型：${formFactor || '手机/平板'}
                     </div>
                     <div style="font-size: 12px; color: #aaa; margin-top: 8px;">
                         👆 请截图此页面，告知店员您的手机型号
                     </div>
                 `;
             } else {
-                // 如果 WURFL 未能识别，显示备用方案
                 resultHtml = `
                     <div class="brand">⚠️ 未能自动识别</div>
                     <div class="model">请告知店员您的手机品牌</div>
@@ -118,13 +110,34 @@
                     </div>
                 `;
             }
-            
             document.getElementById('result-area').innerHTML = resultHtml;
         }
-        
-        // 由于 WURFL.js 是异步加载，我们需要监听它
-        // 简单方案：延迟一点再检查
-        setTimeout(initWURFL, 300);
+
+        // 处理 WURFL 加载完成或已存在的情况
+        if (typeof window.WURFL !== 'undefined' && window.WURFL.complete_device_name) {
+            // 如果已经有了，直接显示
+            displayDeviceInfo();
+        } else {
+            // 等待 WURFL.js 加载完成
+            window.addEventListener('load', function() {
+                let checkInterval = setInterval(function() {
+                    if (typeof window.WURFL !== 'undefined' && window.WURFL.complete_device_name) {
+                        clearInterval(checkInterval);
+                        displayDeviceInfo();
+                    }
+                }, 100);
+                // 5秒后如果还没拿到，显示备用内容
+                setTimeout(function() {
+                    clearInterval(checkInterval);
+                    if (typeof window.WURFL === 'undefined' || !window.WURFL.complete_device_name) {
+                        displayDeviceInfo();
+                    }
+                }, 5000);
+            });
+        }
     </script>
+    
+    <!-- 引入 WURFL.js，添加随机参数避免缓存问题 -->
+    <script src="https://wurfl.io/wurfl.js?v=1.0"></script>
 </body>
 </html>
