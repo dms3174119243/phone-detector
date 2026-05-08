@@ -132,7 +132,7 @@
     </div>
 
     <div class="tip">
-        ＊ 识别结果仅供参考，请告知店员型号即可
+        ＊ 识别结果仅供参考
     </div>
     <div id="manualPanel" style="margin-top: 1rem;"></div>
 </div>
@@ -249,7 +249,7 @@
                     设备类型: ${/iPad|iPhone/i.test(device.rawUA) ? 'iOS设备' : '安卓设备'}
                 </div>
                 <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 0.8rem;">
-                    👆 请截图此页，告知店员型号
+                    👆 请截图此页，根据识别出来的品牌型号选择
                 </div>
             `;
             manualPanel.innerHTML = ''; // 无需手动选择
@@ -286,7 +286,7 @@
                         <div class="brand-icon">✅</div>
                         <div class="model-name">${escapeHtml(brand)}</div>
                         <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 0.8rem;">
-                            👆 请截图告知店员
+                            👆 请截图记录
                         </div>
                     `;
                     manualPanel.innerHTML = ''; // 清除选择区
